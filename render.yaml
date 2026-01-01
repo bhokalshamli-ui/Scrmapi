@@ -1,10 +1,6 @@
 services:
   - type: web
     name: scrmapi
-    env: node                 # ← CRITICAL: Forces Node.js (NO Docker)
-    buildCommand: npm ci
+    env: node
+    buildCommand: npm install    # ← CHANGED: npm install (not ci)
     startCommand: npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-    healthCheckPath: /health
