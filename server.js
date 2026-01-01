@@ -60,28 +60,41 @@ app.post('/api/scan/nmap', (req, res) => {
   });
 });
 
-app.post('/api/scan/nikto', (req, res) => {
+// Replace the Nikto endpoint with Node.js web scanner
+app.post('/api/scan/web', async (req, res) => {
   const { target } = req.body;
   
-  if (!target) {
-    return res.status(400).json({ error: 'Target required' });
+  if (!target.startsWith('http')) {
+    return res.status(400).json({ error: 'URL must start with http:// or https://' });
   }
 
-  const scanId = Date.now();
-  let output = '';
+  res.json({ status: 'starting', scanId: Date.now() });
 
-  const nikto = spawn('nikto', ['-h', target, '-Tuning', '1234567890']);
-  
-  nikto.stdout.on('data', (data) => {
-    output += data.toString();
-    io.emit('nikto-output', { scanId, data: data.toString() });
-  });
-
-  nikto.on('close', (code) => {
-    io.emit('nikto-complete', { scanId, code, output });
-  });
-
-  res.json({ status: 'starting', scanId });
+  try {
+    const axios = require('axios');
+    const response = await axios.get(target, { 
+      timeout: 10000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Pentest-Dashboard)'
+      }
+    });
+    
+    const scanResult = {
+      status: 200,
+      server: response.headers.server || 'Unknown',
+      title: response.data.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1] || 'No title',
+      vulnerabilities: [
+        response.headers.server?.includes('nginx/1.14') && 'Outdated nginx detected',
+        !response.headers['x-frame-options'] && 'Missing X-Frame-Options'
+      ].filter(Boolean)
+    };
+    
+    io.emit('web-scan-complete', scanResult);
+    res.json(scanResult);
+  } catch (error) {
+    io.emit('web-scan-error', error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get('/api/tools', (req, res) => {
