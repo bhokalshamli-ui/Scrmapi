@@ -1,76 +1,25 @@
 services:
-  # Main Pentest Dashboard Web Service
   - type: web
     name: pentest-dashboard
     env: node
-    plan: free                    # Change to 'micro' for production
-    repo: https://github.com/YOUR_USERNAME/pentest-dashboard  # Update with your repo
+    plan: free
+    repo: https://github.com/bhokalshamli-ui/Scrmapi
     
-    # Build configuration with security tools
+    # FIXED: Use npm install instead of ci
     buildCommand: |
-      # Update package index and install pentesting tools
       apt-get update -qq && \
       apt-get install -y --no-install-recommends \
-        nmap \
-        nikto \
-        nuclei \
-        dirsearch \
-        gobuster \
-        curl \
-        wget \
-        jq && \
-      # Cleanup to reduce image size
+        nmap nikto nuclei dirsearch gobuster curl wget jq && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* && \
-      npm ci --only=production
+      npm install --production --no-optional
       
-    # Docker optimizations
-    dockerfilePath: ./Dockerfile
-    dockerCommand: npm start
-    
-    # Runtime configuration
+    # Use simple Node build (no Docker complexity)
     startCommand: npm start
+    
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        sync: false                 # Render auto-assigns PORT
-      - key: NPM_CONFIG_PRODUCTION
-        value: "true"
     
-    # Auto-deploy settings
     autoDeploy: true
-    pullRequestPreviewsEnabled: true
-    branch: main
-    
-    # Health check
     healthCheckPath: /health
-    healthCheckTimeout: 30
-    
-    # Advanced networking
-    handlesTCP: false
-    handlesHTTPHTTPS: true
-    
-    # Disk & Memory (upgrade for heavy scans)
-    disk:
-      name: data
-      mountPath: /data
-      sizeGB: 1
-
-# Optional: Background worker for long-running scans
-  - type: worker
-    name: pentest-worker
-    env: node
-    plan: free
-    repo: https://github.com/YOUR_USERNAME/pentest-dashboard
-    
-    buildCommand: |
-      apt-get update -qq && \
-      apt-get install -y nmap nikto nuclei && \
-      npm ci --only=production
-      
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: WORKER_MODE
-        value: true
