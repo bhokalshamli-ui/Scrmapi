@@ -4,18 +4,20 @@ services:
     env: node
     plan: free
     repo: https://github.com/bhokalshamli-ui/Scrmapi
-    region: oregon
     
-    # FIXED: Simple npm install (no ci)
     buildCommand: |
+      # Install ONLY nmap (nikto via npm alternative)
       apt-get update -qq && \
-      apt-get install -y nmap nikto curl wget jq && \
+      apt-get install -y nmap curl wget && \
       apt-get clean && \
       npm install
       
+    # NO Dockerfile needed
     startCommand: npm start
-    autoDeploy: true
     
     envVars:
       - key: NODE_ENV
         value: production
+        
+    autoDeploy: true
+    healthCheckPath: /health
