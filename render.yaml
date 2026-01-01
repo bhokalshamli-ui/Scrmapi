@@ -1,25 +1,21 @@
 services:
   - type: web
-    name: pentest-dashboard
+    name: scrmapi
     env: node
     plan: free
     repo: https://github.com/bhokalshamli-ui/Scrmapi
+    region: oregon
     
-    # FIXED: Use npm install instead of ci
+    # FIXED: Simple npm install (no ci)
     buildCommand: |
       apt-get update -qq && \
-      apt-get install -y --no-install-recommends \
-        nmap nikto nuclei dirsearch gobuster curl wget jq && \
+      apt-get install -y nmap nikto curl wget jq && \
       apt-get clean && \
-      rm -rf /var/lib/apt/lists/* && \
-      npm install --production --no-optional
+      npm install
       
-    # Use simple Node build (no Docker complexity)
     startCommand: npm start
+    autoDeploy: true
     
     envVars:
       - key: NODE_ENV
         value: production
-    
-    autoDeploy: true
-    healthCheckPath: /health
