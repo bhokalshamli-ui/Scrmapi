@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pentest Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Pentest Dashboard</h1>
+            <div class="status" id="status">Ready</div>
+        </header>
+
+        <main>
+            <div class="scan-panel">
+                <h2>Nmap Port Scan</h2>
+                <div class="input-group">
+                    <input type="text" id="nmap-target" placeholder="Target (e.g., scanme.nmap.org)">
+                    <select id="nmap-options">
+                        <option value="-sV -sC">Basic Service Detection</option>
+                        <option value="-sS -sV -O">SYN Scan + OS Detection</option>
+                        <option value="-A">Aggressive Scan</option>
+                        <option value="-sU">UDP Scan</option>
+                    </select>
+                    <button onclick="runNmap()">Run Scan</button>
+                </div>
+                <div id="nmap-output" class="output"></div>
+            </div>
+
+            <div class="scan-panel">
+                <h2>Nikto Web Scanner</h2>
+                <div class="input-group">
+                    <input type="text" id="nikto-target" placeholder="Target (e.g., http://example.com)">
+                    <button onclick="runNikto()">Run Nikto</button>
+                </div>
+                <div id="nikto-output" class="output"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
