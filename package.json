@@ -1,19 +1,21 @@
 {
   "name": "scrmapi",
   "version": "1.0.0",
+  "description": "Security Dashboard API",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "axios": "^1.7.7",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "helmet": "^7.1.0",
-    "express-rate-limit": "^7.1.5",
-    "socket.io": "^4.7.4",
-    "dotenv": "^16.3.1",
-    "axios": "^1.6.2",
-    "body-parser": "^1.20.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.5.0",
+    "socket.io": "^4.8.1"
   },
   "engines": {
     "node": ">=18.0.0"
