@@ -1,23 +1,10 @@
 services:
   - type: web
     name: scrmapi
-    env: node
-    plan: free
-    repo: https://github.com/bhokalshamli-ui/Scrmapi
-    
-    buildCommand: |
-      # Install ONLY nmap (nikto via npm alternative)
-      apt-get update -qq && \
-      apt-get install -y nmap curl wget && \
-      apt-get clean && \
-      npm install
-      
-    # NO Dockerfile needed
+    env: node                 # ← CRITICAL: Forces Node.js (NO Docker)
+    buildCommand: npm ci
     startCommand: npm start
-    
     envVars:
       - key: NODE_ENV
         value: production
-        
-    autoDeploy: true
     healthCheckPath: /health
